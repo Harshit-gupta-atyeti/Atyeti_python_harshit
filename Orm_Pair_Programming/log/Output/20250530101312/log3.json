@@ -1,0 +1,29 @@
+{
+  "file_name": "log3.txt",
+  "date_of_creation": "20250530101312",
+  "log_levels": {
+    "info": {
+      "messages": [
+        "[InventoryService] - Inventory updated for product: SKU-9981",
+        "[NotificationService] - Email sent to user: johndoe@example.com",
+        "[NotificationService] - Email sent to user: johndoe@example.com",
+        "[CacheManager] - Cache miss for key: user-session-456"
+      ],
+      "count": 4
+    },
+    "error": {
+      "messages": [
+        "[DatabaseConnector] - Failed to connect to database: timeout after 5000ms"
+      ],
+      "count": 1
+    },
+    "warn": {
+      "messages": [
+        "[PaymentGateway] - Payment gateway response delayed for orde#123457",
+        "[CacheManager] - Cache miss for key: user-session-456",
+        "[OrderService] - Failed to place orde123458 due to insufficient stock"
+      ],
+      "count": 3
+    }
+  }
+}

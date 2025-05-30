@@ -1,0 +1,10 @@
+log3.txt,20250528
+2025-05-20 10:02:20 WARNING  [PaymentGateway] - Payment gateway response delayed for orde#123457
+2025-05-20 10:02:25 INFO  [InventoryService] - Inventory updated for product: SKU-9981
+2025-05-20 10:02:27 ERROR  [DatabaseConnector] - Failed to connect to database: timeout after 5000ms
+2025-05-20 10:02:30 INFO  [NotificationService] - Email sent to user: johndoe@example.com
+2025-05-20 10:02:35 WARNING  [CacheManager] - Cache miss for key: user-session-456
+2025-05-20 10:02:40 WARNING  [OrderService] - Failed to place orde123458 due to insufficient stock
+2025-05-20 10:02:40 INFO  [NotificationService] - Email sent to user: johndoe@example.com
+2025-05-20 10:02:45 INFO  [CacheManager] - Cache miss for key: user-session-456
+8
