@@ -1,0 +1,47 @@
+select count(*) from trades_us join liquidity_metrics_us on 'trade_id'='trade_id';
+use ubs;
+-- Goal: Bucket future cash flows by time horizon (0-7 days, 8-30 days, 30+ days).
+WITH cashflow_buckets AS (
+  SELECT
+    trade_id,
+    cashflow_amount,
+    cashflow_date,
+    CASE
+      WHEN cashflow_date <= CURRENT_DATE + 7 THEN '0-7 days'
+      WHEN cashflow_date <= CURRENT_DATE + 30 THEN '8-30 days'
+      ELSE '30+ days'
+    END AS bucket
+  FROM cash_flows_us
+)
+SELECT bucket, SUM(cashflow_amount) AS total_amount
+FROM cashflow_buckets
+GROUP BY bucket;
+-- Create a Stored Procedure to Load Snapshot Daily
+CREATE OR REPLACE PROCEDURE take_liquidity_snapshot()
+BEGIN
+  INSERT INTO liquidity_snapshot_u
+  s
+  SELECT
+    CURRENT_DATE AS snapshot_date,
+    t.trade_id,
+    lm.liquidity_score,
+    lm.liquidity_bucket,
+    lm.stress_scenario,
+    c.cashflow_amount
+  FROM trades_us t
+  JOIN liquidity_metrics_us lm ON t.trade_id = lm.trade_id
+  JOIN cash_flows_us c ON t.trade_id = c.trade_id
+  WHERE t.trade_status = 'ACTIVE' AND lm.updated_at >= CURRENT_DATE - INTERVAL 1 DAY;
+END;
+
+use ubs;
+
+with rankedtransactions as(
+select trade_id,product_type
+trader_token,trade_date,
+notional_amount,
+row_number() over(partition by product_type order by notional_amount desc) as rn from trades_us
+where trade_date>=curdate()-interval 1 month
+)
+select * from rankedtransactions where rn<=3;
+select * from cash_flows_us;
