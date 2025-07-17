@@ -45,3 +45,27 @@ where trade_date>=curdate()-interval 1 month
 )
 select * from rankedtransactions where rn<=3;
 select * from cash_flows_us;
+
+
+use ubs;
+
+
+create or replace view hey as
+select trade_id,cashflow_amount from cash_flows_us
+where direction='inflow' or direction= 'outflow';
+select * from hey;
+drop view hey;
+-- create materialized view as
+-- select trade_id,cashflow_amount from cash_flows_us
+-- where direction='inflow';
+
+-- merge into cash_flows_us as target
+-- using trades_us as source
+-- on target.trade_id=source.trade_id
+-- when matched then update all()
+-- when not matched then insert all();
+
+select * from (select trade_id,notional_amount,
+dense_rank() over(order by notional_amount desc) as rn from trades_us) ranked where rn=5; 
+select * from counterparties_us;
+select substr(legal_name,1,instr(legal_name,'&')) as at_position from counterparties_us;
