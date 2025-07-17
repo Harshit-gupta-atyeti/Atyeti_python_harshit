@@ -69,3 +69,32 @@ select * from (select trade_id,notional_amount,
 dense_rank() over(order by notional_amount desc) as rn from trades_us) ranked where rn=5; 
 select * from counterparties_us;
 select substr(legal_name,1,instr(legal_name,'&')) as at_position from counterparties_us;
+
+
+DELIMITER //
+ 
+CREATE PROCEDURE deposit(IN acc_id INT, IN amt DECIMAL(10,2))
+BEGIN
+    UPDATE accounts 
+    SET balance = balance + amt 
+    WHERE account_id = acc_id;
+ 
+    INSERT INTO transactions (account_id, amount, transaction_type, transaction_date)
+    VALUES (acc_id, amt, 'credit', CURDATE());
+END //
+ 
+DELIMITER ;
+
+
+CREATE OR REPLACE VIEW customer_account_summary AS
+SELECT 
+    c.customer_id,
+    c.name AS customer_name,
+    a.account_id,
+    a.account_type,
+    a.balance
+FROM customers c
+JOIN accounts a ON c.customer_id = a.customer_id;
+
+
+select * from customer_account_summary
